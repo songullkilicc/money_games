@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Money Talks 💰</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;
+  --card-wyr:linear-gradient(135deg,#f8961e,#f3722c);
+  --card-hot:linear-gradient(135deg,#f72585,#b5179e);
+  --card-big:linear-gradient(135deg,#4361ee,#3a0ca3);
+  --card-real:linear-gradient(135deg,#06d6a0,#0077b6);
+  --card-fast:linear-gradient(135deg,#7209b7,#560bad);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Nunito',sans-serif;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:0;position:relative;}
+
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.15;animation:orb-float ease-in-out infinite}
+@keyframes orb-float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-25px) scale(1.06)}}
+
+.header{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:.55rem 1.2rem;background:rgba(13,17,23,.8);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07)}
+.header-title{font-family:'Fredoka One',cursive;font-size:1.3rem;background:linear-gradient(135deg,#ffd166,#06d6a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header-counter{font-family:'Fredoka One',cursive;font-size:.85rem;color:rgba(255,255,255,.4);background:rgba(255,255,255,.06);padding:.25rem .7rem;border-radius:20px;border:1px solid rgba(255,255,255,.09)}
+.type-badge-header{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3)}
+
+.deck{position:relative;z-index:10;width:100%;max-width:680px;display:flex;align-items:center;justify-content:center;margin-top:3.8rem;margin-bottom:5rem;padding:0 .8rem}
+
+.card{width:100%;border-radius:26px;padding:1.6rem 1.8rem 1.4rem;display:flex;flex-direction:column;gap:.8rem;position:relative;overflow:hidden;box-shadow:0 20px 70px rgba(0,0,0,.6);animation:card-in .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes card-in{from{opacity:0;transform:translateY(36px) scale(.93)}to{opacity:1;transform:translateY(0) scale(1)}}
+.card::before{content:'';position:absolute;top:-50%;left:-30%;width:70%;height:180%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.06),transparent);transform:rotate(20deg);pointer-events:none}
+
+.card-top{display:flex;align-items:center;justify-content:space-between}
+.card-num{font-family:'Fredoka One',cursive;font-size:.8rem;color:rgba(255,255,255,.4);background:rgba(0,0,0,.2);padding:.18rem .65rem;border-radius:20px}
+.type-pill{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;padding:.22rem .75rem;border-radius:20px}
+
+.card-emoji{font-size:3.2rem;text-align:center;animation:bob 2.2s ease-in-out infinite;display:block}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+.card-question{font-family:'Fredoka One',cursive;font-size:1.75rem;color:#fff;line-height:1.25;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.3)}
+@media(max-width:480px){.card-question{font-size:1.35rem}}
+
+.vote-section{margin-top:.2rem}
+.vote-row{display:flex;gap:.6rem;margin-bottom:.5rem}
+.vote-btn{flex:1;border:none;border-radius:14px;padding:.7rem .5rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:transform .15s,opacity .15s;position:relative;overflow:hidden}
+.vote-btn:hover{transform:scale(1.03)}
+.vote-btn.voted{opacity:.55}
+.vote-btn.winner{transform:scale(1.04)}
+.vote-count{display:block;font-size:.75rem;font-weight:900;margin-top:.15rem;opacity:.7}
+.vote-bar{height:6px;border-radius:4px;background:rgba(255,255,255,.15);margin-top:.4rem;overflow:hidden}
+.vote-bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+
+.choices{display:flex;flex-direction:column;gap:.5rem;margin-top:.2rem}
+.choice-btn{border:2px solid rgba(255,255,255,.2);border-radius:14px;padding:.65rem 1rem;font-family:'Fredoka One',cursive;font-size:.95rem;color:#fff;background:rgba(255,255,255,.06);cursor:pointer;text-align:left;transition:all .2s}
+.choice-btn:hover,.choice-btn.picked{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.5);transform:translateX(4px)}
+.choice-btn.picked::after{content:'✓';float:right;font-size:1.1rem}
+
+.reveal-zone{background:rgba(0,0,0,.25);border-radius:16px;padding:.9rem 1rem;cursor:pointer;border:2px dashed rgba(255,255,255,.15);transition:all .2s;text-align:center}
+.reveal-zone:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.06)}
+.reveal-hint{font-size:.78rem;font-weight:900;color:rgba(255,255,255,.35);letter-spacing:.08em;text-transform:uppercase}
+.reveal-content{display:none;animation:reveal-in .3s ease-out}
+@keyframes reveal-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.reveal-content.visible{display:block}
+.reveal-label{font-size:.65rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.45rem}
+.reveal-list{list-style:none;display:flex;flex-direction:column;gap:.35rem}
+.reveal-list li{font-size:.87rem;font-weight:800;color:rgba(255,255,255,.82);display:flex;align-items:flex-start;gap:.45rem;line-height:1.4}
+.reveal-list li::before{content:'💬';font-size:.78rem;flex-shrink:0;margin-top:2px}
+
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:center;gap:.8rem;padding:.7rem 1rem;background:rgba(13,17,23,.8);backdrop-filter:blur(14px);border-top:1px solid rgba(255,255,255,.07)}
+.nav-btn{border:none;border-radius:40px;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;padding:.6rem 1.4rem;transition:transform .15s;display:flex;align-items:center;gap:.4rem}
+.nav-btn:hover{transform:scale(1.06)}
+.btn-prev{background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.13);color:#fff}
+.btn-next{background:linear-gradient(135deg,#ffd166,#f8961e);color:#0d1117;font-size:1rem;box-shadow:0 4px 16px rgba(255,209,102,.3)}
+.btn-shuffle{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-size:.82rem}
+.pdots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;max-width:200px;justify-content:center}
+.pdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.16);transition:all .22s}
+.pdot.done{background:#ffd166}
+.pdot.current{background:#fff;transform:scale(1.45)}
+
+#splash{position:fixed;inset:0;z-index:200;background:linear-gradient(135deg,#0d1117,#1a0533,#0a1f3d);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:2rem}
+.splash-emoji{font-size:4.5rem;margin-bottom:.5rem;animation:bob 2s ease-in-out infinite}
+.splash-title{font-family:'Fredoka One',cursive;font-size:2.8rem;background:linear-gradient(135deg,#ffd166,#06d6a0,#4cc9f0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.3rem}
+.splash-sub{font-size:.95rem;font-weight:800;color:rgba(255,255,255,.45);margin-bottom:.8rem;max-width:380px;line-height:1.6}
+.splash-types{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-bottom:1.4rem;max-width:400px}
+.splash-tag{font-size:.7rem;font-weight:900;padding:.25rem .7rem;border-radius:20px;text-transform:uppercase;letter-spacing:.1em}
+.splash-btn{background:linear-gradient(135deg,#ffd166,#f8961e);color:#0d1117;border:none;border-radius:40px;padding:.9rem 2.8rem;font-family:'Fredoka One',cursive;font-size:1.4rem;cursor:pointer;box-shadow:0 6px 22px rgba(255,209,102,.35);transition:transform .15s;margin-bottom:.5rem}
+.splash-btn:hover{transform:scale(1.05)}
+.splash-count{font-size:.75rem;font-weight:800;color:rgba(255,255,255,.25)}
+
+.cf{position:fixed;pointer-events:none;z-index:999;animation:cfall linear forwards}
+@keyframes cfall{0%{opacity:1;transform:translateY(-10px) rotate(0)}100%{opacity:0;transform:translateY(105vh) rotate(720deg)}}
+</style>
+</head>
+<body>
+
+<div class="bg-orbs" id="bgOrbs"></div>
+
+<div id="splash">
+  <div class="splash-emoji">💰</div>
+  <div class="splash-title">Money Talks</div>
+  <div class="splash-sub">Hot takes, wild choices &amp; real talk about money.<br>Every card makes you want to answer! 🔥</div>
+  <div class="splash-types">
+    <span class="splash-tag" style="background:#ffd16622;color:#ffd166">🆚 Would You Rather</span>
+    <span class="splash-tag" style="background:#f7258522;color:#f72585">🔥 Hot Take</span>
+    <span class="splash-tag" style="background:#4cc9f022;color:#4cc9f0">🧠 Big Question</span>
+    <span class="splash-tag" style="background:#06d6a022;color:#06d6a0">🎯 Real Life</span>
+    <span class="splash-tag" style="background:#7209b722;color:#b07fff">⚡ Fast Choice</span>
+  </div>
+  <button class="splash-btn" onclick="startCards()">Show Me the Money! 💸</button>
+  <div class="splash-count">25 cards · Ages 11–14 · Speaking activity</div>
+</div>
+
+<div class="header">
+  <div class="header-title">💰 Money Talks</div>
+  <div class="header-counter" id="counter">1 / 25</div>
+  <div class="type-badge-header" id="typeLabel">Would You Rather</div>
+</div>
+
+<div class="deck" id="deck"></div>
+
+<div class="bottom-nav">
+  <button class="nav-btn btn-prev" onclick="prevCard()">← Back</button>
+  <div class="pdots" id="progressDots"></div>
+  <button class="nav-btn btn-shuffle" onclick="shuffleCards()">🔀</button>
+  <button class="nav-btn btn-next" onclick="nextCard()">Next →</button>
+</div>
+
+<script>
+const CARDS=[
+  {type:'wyr',emoji:'🛍️',question:'Would you rather get £50 to spend RIGHT NOW... or save it and get £200 in 6 months?',
+   optA:'💸 £50 NOW',optB:'⏳ £200 later',
+   followup:['Why did you choose that? Are you more of a spender or a saver?','What would you spend the £50 on? What about the £200?','Do you think waiting for more money is always the smart choice?']},
+
+  {type:'hottake',emoji:'🔥',question:'Pocket money should be BANNED. Kids should earn every penny.',
+   choices:['100% agree — work for it!','Disagree — kids deserve free money','Depends on the family'],
+   followup:['Should parents pay kids for chores? What chores, and how much?','Did you ever earn money doing something? What was it?','What\'s the difference between pocket money and working?']},
+
+  {type:'bigq',emoji:'🤔',question:'If everyone in the world had exactly the same amount of money, would that be fair?',
+   followup:['What would be the best thing about that world? The worst?','Do you think life is fair about money right now?','What does "fair" even mean when it comes to money?']},
+
+  {type:'wyr',emoji:'🎮',question:'Would you rather: get paid £10/hour to do a boring job... or £3/hour to do something you love?',
+   optA:'£10 😴 Boring',optB:'£3 ❤️ Passionate',
+   followup:['Which would you actually pick in real life?','Do you think famous athletes and YouTubers love their work?','Can a hobby become a job? Is that always a good idea?']},
+
+  {type:'reallife',emoji:'🎯',question:'You find £20 on the street. Nobody is around. What do you actually do?',
+   choices:['Keep it — finders keepers!','Look for the owner first','Hand it to a shop / police'],
+   followup:['Be honest — what would most of your friends do?','Does the amount change your decision? What if it was £200?','Have you ever actually found money? What happened?']},
+
+  {type:'fastchoice',emoji:'⚡',question:'Fast! You get £1,000 — you MUST spend it in 24 hours. Go!',
+   followup:['Tell us your spending list! How long did it take you to decide?','Did you think about saving any of it, or giving any away?','If your best friend got the same, what do you think THEY\'D buy?']},
+
+  {type:'hottake',emoji:'🔥',question:'Being rich is more important than being happy.',
+   choices:['True — money = freedom','False — money can\'t buy happiness','Rich people can be unhappy too'],
+   followup:['Can you be truly happy without enough money?','What\'s the minimum amount of money you\'d need to feel "okay"?','Can you think of a rich person who seems unhappy?']},
+
+  {type:'wyr',emoji:'📱',question:'Would you rather: never be able to buy new clothes for 1 year... or give up your phone for 1 month?',
+   optA:'👕 No new clothes',optB:'📵 No phone',
+   followup:['Which one actually felt harder?','How much do you think your phone costs per month (data, apps, etc.)?','Why do we spend so much money on clothes and phones?']},
+
+  {type:'bigq',emoji:'🏦',question:'Should kids your age be taught about money in school — like, really taught?',
+   followup:['What do you wish you already knew about money?','Do your parents talk to you about money? Should they?','Name one money skill that would actually be useful right now.']},
+
+  {type:'reallife',emoji:'🎯',question:'Your friend always has more money than you and shows off about it. What do you do?',
+   choices:['Ignore it, doesn\'t bother me','Feel bad but say nothing','Talk to them directly','Ask my parents for more money'],
+   followup:['Why do some people show off about money?','Does money ever make friendships weird?','Have you ever felt left out because of money?']},
+
+  {type:'wyr',emoji:'⭐',question:'Would you rather be: a millionaire who nobody likes... or broke but with amazing friends?',
+   optA:'💰 Rich & lonely',optB:'❤️ Poor & loved',
+   followup:['This sounds easy — but really think about it. Could loneliness get to you?','Do you think rich people have trouble knowing who their real friends are?','What would you actually need to be happy?']},
+
+  {type:'fastchoice',emoji:'⚡',question:'Your dream job pays £20,000 a year. Your least favourite job pays £200,000. Pick one.',
+   followup:['How long did you think before answering?','Name your dream job and your nightmare job.','At what salary point does the boring job start to be worth it?']},
+
+  {type:'hottake',emoji:'🔥',question:'Influencers who get free stuff should tell their followers the truth — always.',
+   choices:['Definitely — be honest!','It\'s their business, not ours','Only for big brands, not small gifts'],
+   followup:['Have you ever bought something because an influencer showed it?','Is it advertising or fake friendship when influencers promote things?','Would you want to be a paid influencer? What would you promote?']},
+
+  {type:'bigq',emoji:'🤔',question:'A robot can do your future job better and cheaper than you. What do you do?',
+   followup:['Which jobs do you think robots can\'t do?','What would people do all day if robots did all the work?','Should robots earn money? Who should get it?']},
+
+  {type:'reallife',emoji:'🎯',question:'You save up £80 for something. Your parents say it\'s a waste of money. What happens?',
+   choices:['Buy it anyway — it\'s my money!','Listen to them and save it','Ask why and talk it through','Buy it secretly'],
+   followup:['What were you trying to buy?','Should kids have total control over their own money?','When is it okay for parents to say no to a kid\'s spending?']},
+
+  {type:'wyr',emoji:'🌍',question:'Would you rather: earn more money than everyone you know... or have enough and do work that helps the world?',
+   optA:'📈 Richest around',optB:'🌱 Meaningful work',
+   followup:['Is it selfish to choose the money?','Can you name a job that\'s both well-paid AND helps people?','What does "enough" money look like to you?']},
+
+  {type:'hottake',emoji:'🔥',question:'Giving money to homeless people doesn\'t actually help them.',
+   choices:['Agree — there are better ways','Disagree — every bit helps','It depends on the situation'],
+   followup:['What do you think actually helps people who are homeless?','Have you ever given money to someone on the street?','Why do some people end up without money or a home?']},
+
+  {type:'fastchoice',emoji:'⚡',question:'You start a school business selling something. What are you selling and how much do you charge?',
+   followup:['Walk us through your business plan!','What would your biggest costs be?','Who is your biggest competition at school?']},
+
+  {type:'bigq',emoji:'🤔',question:'Is it ever okay to lie to make money?',
+   followup:['Where\'s the line between "marketing" and lying?','Have you ever stretched the truth to get something?','What would happen to business if everyone lied?']},
+
+  {type:'wyr',emoji:'🏆',question:'Would you rather: win £50,000 in a competition... or slowly earn £100,000 yourself over 5 years?',
+   optA:'🍀 Win £50k',optB:'💪 Earn £100k',
+   followup:['Does money feel different when you earn it vs when you win it?','What would you do differently with earned money vs won money?','Which one would make you feel better about yourself?']},
+
+  {type:'reallife',emoji:'🎯',question:'You want to buy your mum a birthday gift but you\'re broke. What do you do?',
+   choices:['Borrow money and pay back later','Make or find something free','Ask a sibling / family member to split it','Be honest and promise a gift later'],
+   followup:['Is a homemade gift as good as a bought one?','Have you ever had to deal with this? What happened?','What\'s the best gift you\'ve ever given or received?']},
+
+  {type:'hottake',emoji:'🔥',question:'Kids should be paid for getting good grades at school.',
+   choices:['Yes! It would motivate everyone','No — learning is its own reward','Only for really hard subjects'],
+   followup:['Would YOU work harder for money?','What problems could happen if schools did this?','Are good grades more valuable than money in the long run?']},
+
+  {type:'fastchoice',emoji:'⚡',question:'Design your ideal salary as an adult. What job, what pay, what lifestyle?',
+   followup:['How did you work out that number — is it realistic?','What do you think your parents earn? (Guess!)','What lifestyle choices most affect how much money you need?']},
+
+  {type:'bigq',emoji:'🤔',question:'Should there be a maximum amount of money one person can have?',
+   choices:['Yes — cap it at a billion','No — people can earn what they want','Cap it and give the rest away'],
+   followup:['What would you do with the leftover money if it was capped?','Can you think of someone who has too much money?','Is there a difference between making £1 million and £1 billion?']},
+
+  {type:'wyr',emoji:'🔮',question:'Would you rather: know exactly how much money you\'ll have at age 30... or be completely surprised?',
+   optA:'🔮 Know the future',optB:'🎲 Stay surprised',
+   followup:['If you saw a small number, would you try to change it?','What age do you think people stop worrying about money?','What\'s one money decision you\'ll have to make by age 20?']},
+];
+
+const TYPE_CONFIG={
+  wyr:{label:'Would You Rather',color:'linear-gradient(135deg,#f8961e,#f3722c)',pill:{bg:'rgba(255,209,102,.2)',color:'#ffd166'}},
+  hottake:{label:'Hot Take 🔥',color:'linear-gradient(135deg,#f72585,#b5179e)',pill:{bg:'rgba(247,37,133,.2)',color:'#ff8ec8'}},
+  bigq:{label:'Big Question',color:'linear-gradient(135deg,#4361ee,#3a0ca3)',pill:{bg:'rgba(67,97,238,.2)',color:'#9ab4ff'}},
+  reallife:{label:'Real Life',color:'linear-gradient(135deg,#06d6a0,#0077b6)',pill:{bg:'rgba(6,214,160,.2)',color:'#06d6a0'}},
+  fastchoice:{label:'Fast Choice ⚡',color:'linear-gradient(135deg,#7209b7,#560bad)',pill:{bg:'rgba(114,9,183,.2)',color:'#b07fff'}},
+};
+
+let cards=[...CARDS];
+let current=0;
+
+function buildOrbs(){
+  const wrap=document.getElementById('bgOrbs');
+  [{w:350,l:'-5%',t:'15%',c:'#7209b7',dur:'9s'},{w:300,l:'65%',t:'55%',c:'#4361ee',dur:'12s'},{w:280,l:'25%',t:'65%',c:'#f72585',dur:'8s'},{w:220,l:'80%',t:'5%',c:'#06d6a0',dur:'14s'},{w:180,l:'45%',t:'25%',c:'#f8961e',dur:'11s'}].forEach(o=>{
+    const d=document.createElement('div');d.className='orb';
+    d.style.cssText=`width:${o.w}px;height:${o.w}px;left:${o.l};top:${o.t};background:${o.c};animation-duration:${o.dur};animation-delay:${Math.random()*4}s`;
+    wrap.appendChild(d);
+  });
+}
+
+function buildDots(){
+  const wrap=document.getElementById('progressDots');wrap.innerHTML='';
+  for(let i=0;i<cards.length;i++){
+    const d=document.createElement('div');
+    d.className='pdot'+(i<current?' done':i===current?' current':'');
+    wrap.appendChild(d);
+  }
+}
+
+let votes={A:0,B:0};
+
+function renderCard(){
+  votes={A:0,B:0};
+  const c=cards[current];
+  const tc=TYPE_CONFIG[c.type];
+  document.getElementById('counter').textContent=`${current+1} / ${cards.length}`;
+  document.getElementById('typeLabel').textContent=tc.label;
+  buildDots();
+
+  let inner='';
+
+  if(c.type==='wyr'){
+    inner=`
+      <div class="vote-section">
+        <div class="vote-row">
+          <button class="vote-btn" id="vA" style="background:linear-gradient(135deg,#ffd166,#f8961e);color:#0d1117" onclick="castVote('A')">${c.optA}<span class="vote-count" id="vcA">0 votes</span></button>
+          <button class="vote-btn" id="vB" style="background:linear-gradient(135deg,#4cc9f0,#4361ee);color:#fff" onclick="castVote('B')">${c.optB}<span class="vote-count" id="vcB">0 votes</span></button>
+        </div>
+        <div class="vote-bar"><div class="vote-bar-fill" id="vbar" style="width:50%;background:linear-gradient(90deg,#ffd166,#4cc9f0)"></div></div>
+      </div>`;
+  } else if(c.choices){
+    inner=`<div class="choices">${c.choices.map(ch=>`<button class="choice-btn" onclick="pickChoice(this)">${ch}</button>`).join('')}</div>`;
+  }
+
+  const followupHtml=`
+    <div class="reveal-zone" onclick="toggleReveal(this)">
+      <div class="reveal-hint">👆 Tap for conversation starters</div>
+      <div class="reveal-content">
+        <div class="reveal-label">Keep talking...</div>
+        <ul class="reveal-list">${c.followup.map(q=>`<li>${q}</li>`).join('')}</ul>
+      </div>
+    </div>`;
+
+  document.getElementById('deck').innerHTML=`
+    <div class="card" style="background:${tc.color}">
+      <div class="card-top">
+        <div class="card-num">Card ${current+1}</div>
+        <div class="type-pill" style="background:${tc.pill.bg};color:${tc.pill.color}">${tc.label}</div>
+      </div>
+      <span class="card-emoji">${c.emoji}</span>
+      <div class="card-question">${c.question}</div>
+      ${inner}
+      ${followupHtml}
+    </div>`;
+}
+
+function castVote(side){
+  votes[side]++;
+  const total=votes.A+votes.B;
+  const pctA=total?Math.round(votes.A/total*100):50;
+  document.getElementById('vcA').textContent=`${votes.A} vote${votes.A!==1?'s':''}`;
+  document.getElementById('vcB').textContent=`${votes.B} vote${votes.B!==1?'s':''}`;
+  document.getElementById('vbar').style.width=pctA+'%';
+  if(votes.A>votes.B){document.getElementById('vA').classList.add('winner');document.getElementById('vB').classList.remove('winner');}
+  else if(votes.B>votes.A){document.getElementById('vB').classList.add('winner');document.getElementById('vA').classList.remove('winner');}
+}
+
+function pickChoice(btn){
+  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('picked'));
+  btn.classList.add('picked');
+}
+
+function toggleReveal(zone){
+  const rc=zone.querySelector('.reveal-content');
+  const rh=zone.querySelector('.reveal-hint');
+  const visible=rc.classList.contains('visible');
+  rc.classList.toggle('visible',!visible);
+  rh.style.display=visible?'block':'none';
+}
+
+function nextCard(){
+  if(current>=cards.length-1){
+    doConfetti(60);
+    setTimeout(()=>{if(confirm('🎉 All 25 cards done! Shuffle and go again?')){shuffleCards();}},400);
+    return;
+  }
+  current++;renderCard();
+}
+function prevCard(){if(current<=0)return;current--;renderCard();}
+function shuffleCards(){cards=[...CARDS].sort(()=>Math.random()-.5);current=0;renderCard();doConfetti(18);}
+function startCards(){document.getElementById('splash').style.display='none';renderCard();}
+
+document.addEventListener('keydown',e=>{
+  if(e.code==='ArrowRight'||e.code==='Space'){e.preventDefault();nextCard();}
+  else if(e.code==='ArrowLeft'){e.preventDefault();prevCard();}
+});
+
+function doConfetti(n){
+  const cols=['#ffd166','#f72585','#4361ee','#06d6a0','#f8961e','#fff','#b07fff','#4cc9f0'];
+  for(let i=0;i<n;i++){
+    const d=document.createElement('div');d.className='cf';
+    d.style.left=Math.random()*100+'%';d.style.top='-10px';d.style.background=cols[~~(Math.random()*cols.length)];
+    const sz=6+Math.random()*10;d.style.width=sz+'px';d.style.height=sz+'px';
+    if(Math.random()>.5)d.style.borderRadius='50%';
+    d.style.animationDuration=(1.4+Math.random()*2)+'s';d.style.animationDelay=(Math.random()*.5)+'s';
+    document.body.appendChild(d);setTimeout(()=>d.remove(),4000);
+  }
+}
+
+buildOrbs();
+</script>
+</body>
+</html>
